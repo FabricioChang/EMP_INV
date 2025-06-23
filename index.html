@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventario EMP</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <h1>Gestión de Inventario</h1>
+
+  <h2>Registrar nuevo producto</h2>
+  <label>Nombre: <input type="text" id="nombre" /></label><br />
+  <label>Categoría: <input type="text" id="categoria" /></label><br />
+  <label>Unidad: <input type="text" id="unidad" /></label><br />
+  <label>Stock inicial: <input type="number" id="stock" /></label><br />
+  <label>Umbral mínimo: <input type="number" id="umbral" /></label><br />
+  <label>Vida útil (días): <input type="number" id="vida_util" /></label><br />
+  <button onclick="registrarProducto()">Registrar producto</button>
+
+  <h2>Inventario actual</h2>
+  <div id="productos">Cargando productos...</div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDlTr-BAF6DMhb4XeYhbkuiPOIc2vLrtDs",
+      authDomain: "gestion-inventario-emp.firebaseapp.com",
+      databaseURL: "https://gestion-inventario-emp-default-rtdb.firebaseio.com",
+      projectId: "gestion-inventario-emp",
+      storageBucket: "gestion-inventario-emp.firebasestorage.app",
+      messagingSenderId: "733370903687",
+      appId: "1:733370903687:web:c2893acb73148f71e15c22"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function registrarProducto() {
+      const producto = {
+        nombre: document.getElementById('nombre').value,
+        categoria: document.getElementById('categoria').value,
+        unidad: document.getElementById('unidad').value,
+        stock: parseInt(document.getElementById('stock').value),
+        umbral: parseInt(document.getElementById('umbral').value),
+        vida_util: parseInt(document.getElementById('vida_util').value),
+        historial: {}, // Se inicializa vacío
+        fechaCreacion: new Date().toISOString()
+      };
+
+      db.collection("productos").add(producto).then(() => {
+        alert("✅ Producto registrado");
+        cargarProductos();
+      });
+    }
+
+    function cargarProductos() {
+      const contenedor = document.getElementById("productos");
+      contenedor.innerHTML = "Cargando...";
+
+      db.collection("productos").get().then(snapshot => {
+        contenedor.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          contenedor.innerHTML += `
+            <div>
+              <strong>${data.nombre}</strong> (${data.categoria})<br/>
+              Stock: ${data.stock} ${data.unidad} | Umbral: ${data.umbral} | Vida útil: ${data.vida_util} días
+              <hr/>
+            </div>`;
+        });
+      });
+    }
+
+    window.onload = cargarProductos;
+  </script>
+</body>
+</html>
