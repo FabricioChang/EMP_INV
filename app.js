@@ -1,4 +1,4 @@
-// Firebase config
+// Configuración Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDlTr-BAF6DMhb4XeYhbkuiPOIc2vLrtDs",
   authDomain: "gestion-inventario-emp.firebaseapp.com",
@@ -24,14 +24,9 @@ function registrarProducto() {
     fechaCreacion: new Date().toISOString()
   };
 
-  db.ref("/").once("value", snapshot => {
-    const data = snapshot.val() || {};
-    const nuevoId = Object.keys(data).length.toString(); // nuevo índice numérico
-    db.ref(nuevoId).set(producto)
-      .then(() => {
-        alert("✅ Producto registrado");
-        cargarProductos();
-      });
+  db.ref().push(producto).then(() => {
+    alert("✅ Producto registrado");
+    cargarProductos();
   });
 }
 
@@ -39,7 +34,7 @@ function cargarProductos() {
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "Cargando...";
 
-  db.ref("/").once("value", snapshot => {
+  db.ref().once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay productos registrados aún.</p>";
@@ -50,9 +45,9 @@ function cargarProductos() {
     Object.values(data).forEach(p => {
       contenedor.innerHTML += `
         <div class="p-3 bg-white rounded shadow text-sm">
-          <strong>${p.nombre || 'Sin nombre'}</strong> (${p.categoria || 'Sin categoría'})<br/>
-          Stock: ${p.stock || 0} ${p.unidad || ''}<br/>
-          Umbral: ${p.umbral || 0} | Vida útil: ${p.vida_util || '?'} días
+          <strong>${p.nombre}</strong> (${p.categoria})<br/>
+          Stock: ${p.stock} ${p.unidad}<br/>
+          Umbral: ${p.umbral} | Vida útil: ${p.vida_util} días
         </div>`;
     });
   });
@@ -62,7 +57,7 @@ function calcularPredicciones() {
   const contenedor = document.getElementById("predicciones");
   contenedor.innerHTML = "Calculando...";
 
-  db.ref("/").once("value", snapshot => {
+  db.ref().once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay datos disponibles.</p>";
@@ -82,20 +77,18 @@ function calcularPredicciones() {
     Object.values(data).forEach(p => {
       const historial = p.historial || {};
       const consumos = Object.values(historial).filter(n => typeof n === 'number');
-      const promedio = consumos.length > 0
-        ? consumos.reduce((a, b) => a + b, 0) / consumos.length
-        : 0;
+      const promedio = consumos.length > 0 ? consumos.reduce((a, b) => a + b, 0) / consumos.length : 0;
 
       const vidaUtil = p.vida_util || 30;
       const maximoSeguro = (vidaUtil / 30) * promedio;
-      let sugerido = Math.ceil(promedio - (p.stock || 0));
-      if ((p.stock || 0) >= maximoSeguro) sugerido = 0;
+      let sugerido = Math.ceil(promedio - p.stock);
+      if (p.stock >= maximoSeguro) sugerido = 0;
       if (sugerido < 0) sugerido = 0;
 
       html += `<tr class="border-b">
-        <td class="px-2 py-1">${p.nombre || '-'}</td>
+        <td class="px-2 py-1">${p.nombre}</td>
         <td class="px-2 py-1">${promedio.toFixed(1)}</td>
-        <td class="px-2 py-1">${p.stock || 0}</td>
+        <td class="px-2 py-1">${p.stock}</td>
         <td class="px-2 py-1">${vidaUtil}</td>
         <td class="px-2 py-1">${maximoSeguro.toFixed(1)}</td>
         <td class="px-2 py-1 font-semibold">${sugerido}</td>
@@ -103,6 +96,22 @@ function calcularPredicciones() {
     });
 
     html += `</tbody></table>`;
+
+    // Sección de pedido sugerido
+    html += `<h3 class="mt-6 text-lg font-semibold">Pedido sugerido para el siguiente mes</h3>`;
+    html += `<ul class="list-disc pl-5 mt-2 text-gray-700">`;
+
+    Object.values(data).forEach(p => {
+      const historial = p.historial || {};
+      const consumos = Object.values(historial).filter(n => typeof n === 'number');
+      const promedio = consumos.length > 0 ? consumos.reduce((a, b) => a + b, 0) / consumos.length : 0;
+      const sugerido = Math.max(0, Math.ceil(promedio - (p.stock || 0)));
+
+      html += `<li><strong>${p.nombre}</strong>: Se recomienda pedir <strong>${sugerido}</strong> ${p.unidad || ''} para cubrir un mes.</li>`;
+    });
+
+    html += `</ul>`;
+
     contenedor.innerHTML = html;
   });
 }

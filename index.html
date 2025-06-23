@@ -5,20 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestión de Inventario</title>
 
-  <!-- Landwind + Tailwind -->
+  <!-- Tailwind + Landwind -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
   <link href="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.css" rel="stylesheet" />
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-
 </head>
 <body class="bg-gray-50 text-gray-800 px-6 py-4 font-sans">
   <div class="max-w-3xl mx-auto">
     <h1 class="text-3xl font-bold mb-6">Gestión de Inventario</h1>
 
-    <!-- Registrar producto -->
+    <!-- Registro -->
     <section class="mb-8">
       <h2 class="text-xl font-semibold mb-4">Registrar nuevo producto</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -32,7 +31,7 @@
       <button onclick="registrarProducto()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Registrar</button>
     </section>
 
-    <!-- Inventario -->
+    <!-- Inventario actual -->
     <section class="mb-8">
       <h2 class="text-xl font-semibold mb-4">Inventario actual</h2>
       <div id="productos" class="space-y-2 text-sm text-gray-700">Cargando...</div>
@@ -46,7 +45,7 @@
     </section>
   </div>
 
-  <!-- App logic -->
+  <!-- Lógica principal -->
   <script src="app.js"></script>
 </body>
 </html>
