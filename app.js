@@ -1,4 +1,4 @@
-// Configuración Firebase para Realtime Database
+// Configuración Firebase para Realtime Database (sin usar nodo 'productos')
 const firebaseConfig = {
   apiKey: "AIzaSyDlTr-BAF6DMhb4XeYhbkuiPOIc2vLrtDs",
   authDomain: "gestion-inventario-emp.firebaseapp.com",
@@ -24,8 +24,8 @@ function registrarProducto() {
     fechaCreacion: new Date().toISOString()
   };
 
-  const nuevoId = db.ref().child("productos").push().key;
-  db.ref("productos/" + nuevoId).set(producto)
+  const nuevoId = db.ref().push().key;
+  db.ref(nuevoId).set(producto)
     .then(() => {
       alert("✅ Producto registrado");
       cargarProductos();
@@ -36,7 +36,7 @@ function cargarProductos() {
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "Cargando...";
 
-  db.ref("productos").once("value", snapshot => {
+  db.ref().once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay productos registrados aún.</p>";
@@ -45,6 +45,7 @@ function cargarProductos() {
 
     contenedor.innerHTML = "";
     Object.values(data).forEach(p => {
+      if (!p.nombre) return; // prevenir nodos inválidos
       contenedor.innerHTML += `
         <div class="p-3 bg-white rounded shadow text-sm">
           <strong>${p.nombre}</strong> (${p.categoria})<br/>
@@ -59,7 +60,7 @@ function calcularPredicciones() {
   const contenedor = document.getElementById("predicciones");
   contenedor.innerHTML = "Calculando...";
 
-  db.ref("productos").once("value", snapshot => {
+  db.ref().once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay datos disponibles.</p>";
@@ -77,6 +78,7 @@ function calcularPredicciones() {
       </tr></thead><tbody>`;
 
     Object.values(data).forEach(p => {
+      if (!p.nombre) return;
       const historial = p.historial || {};
       const consumos = Object.values(historial);
       const promedio = consumos.length > 0
