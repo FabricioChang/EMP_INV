@@ -1,35 +1,19 @@
-// Configuración Firebase
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDlTr-BAF6DMhb4XeYhbkuiPOIc2vLrtDs",
   authDomain: "gestion-inventario-emp.firebaseapp.com",
   databaseURL: "https://gestion-inventario-emp-default-rtdb.firebaseio.com",
   projectId: "gestion-inventario-emp",
-  storageBucket: "gestion-inventario-emp.firebasestorage.app",
+  storageBucket: "gestion-inventario-emp.appspot.com",
   messagingSenderId: "733370903687",
   appId: "1:733370903687:web:c2893acb73148f71e15c22"
 };
 
+// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-function registrarProducto() {
-  const producto = {
-    nombre: document.getElementById('nombre').value,
-    categoria: document.getElementById('categoria').value,
-    unidad: document.getElementById('unidad').value,
-    stock: parseInt(document.getElementById('stock').value),
-    umbral: parseInt(document.getElementById('umbral').value),
-    vida_util: parseInt(document.getElementById('vida_util').value),
-    historial: {},
-    fechaCreacion: new Date().toISOString()
-  };
-
-  db.ref().push(producto).then(() => {
-    alert("✅ Producto registrado");
-    cargarProductos();
-  });
-}
-
+// Cargar productos en tarjetas con controles de stock
 function cargarProductos() {
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "Cargando...";
@@ -42,20 +26,42 @@ function cargarProductos() {
     }
 
     contenedor.innerHTML = "";
-    Object.values(data).forEach(p => {
+    Object.entries(data).forEach(([id, p]) => {
       contenedor.innerHTML += `
-        <div class="p-3 bg-white rounded shadow text-sm">
+        <div class="p-3 bg-white rounded shadow text-sm space-y-1">
           <strong>${p.nombre}</strong> (${p.categoria})<br/>
-          Stock: ${p.stock} ${p.unidad}<br/>
+          Stock: <span id="stock-${id}">${p.stock}</span> ${p.unidad || ""}<br/>
           Umbral: ${p.umbral} | Vida útil: ${p.vida_util} días
+          <div class="flex items-center gap-2 mt-2">
+            <button onclick="ajustarStock('${id}', -1)" class="px-2 py-1 bg-red-500 text-white rounded">-1</button>
+            <button onclick="ajustarStock('${id}', 1)" class="px-2 py-1 bg-blue-500 text-white rounded">+1</button>
+            <input type="number" id="ajuste-${id}" placeholder="Cantidad" class="w-20 px-2 py-1 border rounded text-sm" />
+            <button onclick="ajustarStock('${id}', parseInt(document.getElementById('ajuste-${id}').value || 0))" class="px-2 py-1 bg-green-500 text-white rounded">+N</button>
+            <button onclick="ajustarStock('${id}', -parseInt(document.getElementById('ajuste-${id}').value || 0))" class="px-2 py-1 bg-yellow-500 text-white rounded">-N</button>
+          </div>
         </div>`;
     });
   });
 }
 
+// Modificar stock en tiempo real y actualizar visual
+function ajustarStock(id, cantidad) {
+  const stockEl = document.getElementById(`stock-${id}`);
+  const nuevoStock = Math.max(0, parseInt(stockEl.textContent) + cantidad);
+  db.ref(id).update({ stock: nuevoStock });
+  stockEl.textContent = nuevoStock;
+  calcularPredicciones(); // Actualiza la predicción en tiempo real
+}
+
+// Predicción de reabastecimiento basada en fecha actual
 function calcularPredicciones() {
   const contenedor = document.getElementById("predicciones");
   contenedor.innerHTML = "Calculando...";
+
+  const hoy = new Date();
+  const diaActual = hoy.getDate();
+  const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+  const diasRestantes = diasMes - diaActual;
 
   db.ref().once("value", snapshot => {
     const data = snapshot.val();
@@ -76,14 +82,18 @@ function calcularPredicciones() {
 
     Object.values(data).forEach(p => {
       const historial = p.historial || {};
-      const consumos = Object.values(historial).filter(n => typeof n === 'number');
-      const promedio = consumos.length > 0 ? consumos.reduce((a, b) => a + b, 0) / consumos.length : 0;
+      const consumos = Object.values(historial);
+      const promedio = consumos.length > 0
+        ? consumos.reduce((a, b) => a + b, 0) / consumos.length
+        : 0;
 
       const vidaUtil = p.vida_util || 30;
       const maximoSeguro = (vidaUtil / 30) * promedio;
-      let sugerido = Math.ceil(promedio - p.stock);
-      if (p.stock >= maximoSeguro) sugerido = 0;
-      if (sugerido < 0) sugerido = 0;
+
+      const consumoDiario = promedio / 30;
+      const consumoRestanteMes = diasRestantes * consumoDiario;
+      const stockProyectado = p.stock - consumoRestanteMes;
+      const sugerido = Math.max(0, Math.ceil(promedio - stockProyectado));
 
       html += `<tr class="border-b">
         <td class="px-2 py-1">${p.nombre}</td>
@@ -96,24 +106,12 @@ function calcularPredicciones() {
     });
 
     html += `</tbody></table>`;
-
-    // Sección de pedido sugerido
-    html += `<h3 class="mt-6 text-lg font-semibold">Pedido sugerido para el siguiente mes</h3>`;
-    html += `<ul class="list-disc pl-5 mt-2 text-gray-700">`;
-
-    Object.values(data).forEach(p => {
-      const historial = p.historial || {};
-      const consumos = Object.values(historial).filter(n => typeof n === 'number');
-      const promedio = consumos.length > 0 ? consumos.reduce((a, b) => a + b, 0) / consumos.length : 0;
-      const sugerido = Math.max(0, Math.ceil(promedio - (p.stock || 0)));
-
-      html += `<li><strong>${p.nombre}</strong>: Se recomienda pedir <strong>${sugerido}</strong> ${p.unidad || ''} para cubrir un mes.</li>`;
-    });
-
-    html += `</ul>`;
-
     contenedor.innerHTML = html;
   });
 }
 
-window.onload = cargarProductos;
+// Cargar productos al iniciar
+window.addEventListener("DOMContentLoaded", () => {
+  cargarProductos();
+  calcularPredicciones();
+});
