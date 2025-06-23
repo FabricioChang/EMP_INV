@@ -1,4 +1,4 @@
-// Configuración Firebase
+// Configuración Firebase para Realtime Database
 const firebaseConfig = {
   apiKey: "AIzaSyDlTr-BAF6DMhb4XeYhbkuiPOIc2vLrtDs",
   authDomain: "gestion-inventario-emp.firebaseapp.com",
@@ -24,24 +24,32 @@ function registrarProducto() {
     fechaCreacion: new Date().toISOString()
   };
 
-  db.collection("productos").add(producto).then(() => {
-    alert("✅ Producto registrado");
-    cargarProductos();
-  });
+  const nuevoId = db.ref().child("productos").push().key;
+  db.ref("productos/" + nuevoId).set(producto)
+    .then(() => {
+      alert("✅ Producto registrado");
+      cargarProductos();
+    });
 }
 
 function cargarProductos() {
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "Cargando...";
 
-  db.collection("productos").get().then(snapshot => {
+  db.ref("productos").once("value", snapshot => {
+    const data = snapshot.val();
+    if (!data) {
+      contenedor.innerHTML = "<p class='text-gray-500'>No hay productos registrados aún.</p>";
+      return;
+    }
+
     contenedor.innerHTML = "";
-    snapshot.forEach(doc => {
-      const p = doc.data();
+    Object.values(data).forEach(p => {
       contenedor.innerHTML += `
-        <div class="p-3 bg-white rounded shadow">
+        <div class="p-3 bg-white rounded shadow text-sm">
           <strong>${p.nombre}</strong> (${p.categoria})<br/>
-          Stock: ${p.stock} ${p.unidad} | Umbral: ${p.umbral} | Vida útil: ${p.vida_util} días
+          Stock: ${p.stock} ${p.unidad}<br/>
+          Umbral: ${p.umbral} | Vida útil: ${p.vida_util} días
         </div>`;
     });
   });
@@ -51,7 +59,13 @@ function calcularPredicciones() {
   const contenedor = document.getElementById("predicciones");
   contenedor.innerHTML = "Calculando...";
 
-  db.collection("productos").get().then(snapshot => {
+  db.ref("productos").once("value", snapshot => {
+    const data = snapshot.val();
+    if (!data) {
+      contenedor.innerHTML = "<p class='text-gray-500'>No hay datos disponibles.</p>";
+      return;
+    }
+
     let html = `<table class="table-auto w-full text-left">
       <thead><tr class="bg-gray-100">
         <th class="px-2 py-1">Producto</th>
@@ -62,8 +76,7 @@ function calcularPredicciones() {
         <th class="px-2 py-1">Sugerido</th>
       </tr></thead><tbody>`;
 
-    snapshot.forEach(doc => {
-      const p = doc.data();
+    Object.values(data).forEach(p => {
       const historial = p.historial || {};
       const consumos = Object.values(historial);
       const promedio = consumos.length > 0
