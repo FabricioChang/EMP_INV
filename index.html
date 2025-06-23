@@ -1,50 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestión de Inventario</title>
-
-  <!-- Tailwind + Landwind -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-  <link href="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.css" rel="stylesheet" />
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototipo Thunderbolts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 px-6 py-4 font-sans">
-  <div class="max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6">Gestión de Inventario</h1>
+<body class="bg-slate-50 text-gray-800">
+  <header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-indigo-700">Prototipo Thunderbolts</h1>
+      <nav class="space-x-6">
+        <a href="registro.html" class="text-gray-700 hover:text-indigo-700 font-medium">Registro de productos</a>
+        <a href="inventario.html" class="text-gray-700 hover:text-indigo-700 font-medium">Inventario</a>
+        <a href="control.html" class="text-gray-700 hover:text-indigo-700 font-medium">Control</a>
+        <a href="reabastecimiento.html" class="text-gray-700 hover:text-indigo-700 font-medium">Solicitud de reabastecimiento</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- Registro -->
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">Registrar nuevo producto</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" id="nombre" placeholder="Nombre" class="input" />
-        <input type="text" id="categoria" placeholder="Categoría" class="input" />
-        <input type="text" id="unidad" placeholder="Unidad" class="input" />
-        <input type="number" id="stock" placeholder="Stock inicial" class="input" />
-        <input type="number" id="umbral" placeholder="Umbral mínimo" class="input" />
-        <input type="number" id="vida_util" placeholder="Vida útil (días)" class="input" />
-      </div>
-      <button onclick="registrarProducto()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Registrar</button>
-    </section>
-
-    <!-- Inventario -->
-    <section class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">Inventario actual</h2>
-        <div id="productos" class="space-y-2 text-sm text-gray-700">Cargando...</div>
-    </section>
-
-    <!-- Predicción -->
-    <section>
-        <h2 class="text-xl font-semibold mb-4">Predicción de reabastecimiento</h2>
-        <button onclick="calcularPredicciones()" class="mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Calcular</button>
-        <div id="predicciones" class="overflow-x-auto text-sm"></div>
-    </section>
-
-  <!-- Lógica principal -->
-  <script src="app.js"></script>
+  <main class="flex items-center justify-center h-[calc(100vh-80px)]">
+    <h2 class="text-3xl font-semibold text-center text-indigo-600">Bienvenido al Prototipo Thunderbolts</h2>
+  </main>
 </body>
 </html>

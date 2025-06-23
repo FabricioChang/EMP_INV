@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventario - Thunderbolts</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <header class="bg-white shadow">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Prototipo Thunderbolts</h1>
+      <ul class="flex space-x-6 text-sm">
+        <li><a href="registro.html" class="hover:text-blue-500">Registro de productos</a></li>
+        <li><a href="inventario.html" class="text-blue-600 font-semibold">Inventario</a></li>
+        <li><a href="control.html" class="hover:text-blue-500">Control</a></li>
+        <li><a href="reabastecimiento.html" class="hover:text-blue-500">Solicitud de reabastecimiento</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="max-w-4xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-bold mb-6">Inventario actual</h2>
+    <div id="productos" class="space-y-4 text-sm">Cargando...</div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

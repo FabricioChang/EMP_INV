@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de productos - Thunderbolts</title>
+
+  <!-- Tailwind CSS y Flowbite -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link href="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <header class="bg-white shadow">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Prototipo Thunderbolts</h1>
+      <ul class="flex space-x-6 text-sm">
+        <li><a href="registro.html" class="text-blue-600 font-semibold">Registro de productos</a></li>
+        <li><a href="inventario.html" class="hover:text-blue-500">Inventario</a></li>
+        <li><a href="control.html" class="hover:text-blue-500">Control</a></li>
+        <li><a href="reabastecimiento.html" class="hover:text-blue-500">Solicitud de reabastecimiento</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="max-w-3xl mx-auto py-10 px-4">
+    <h2 class="text-2xl font-bold mb-6">Registrar nuevo producto</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <input type="text" id="nombre" placeholder="Nombre del producto" class="input" />
+      <input type="text" id="categoria" placeholder="Categoría" class="input" />
+      <input type="text" id="unidad" placeholder="Unidad de medida" class="input" />
+      <input type="number" id="stock" placeholder="Stock inicial" class="input" />
+      <input type="number" id="umbral" placeholder="Umbral mínimo" class="input" />
+      <input type="number" id="vida_util" placeholder="Vida útil (días)" class="input" />
+    </div>
+    <button onclick="registrarProducto()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+      Registrar producto
+    </button>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
