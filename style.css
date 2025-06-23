@@ -16,6 +16,10 @@
   @apply bg-gray-100;
 }
 
+.w-20{
+  width: 100px;
+}
+
 button {
   @apply transition duration-200;
 }
