@@ -36,8 +36,8 @@ function cargarProductos() {
             <button onclick="ajustarStock('${id}', -1)" class="px-2 py-1 bg-red-500 text-white rounded">-1</button>
             <button onclick="ajustarStock('${id}', 1)" class="px-2 py-1 bg-blue-500 text-white rounded">+1</button>
             <input type="number" id="ajuste-${id}" placeholder="Cantidad" class="w-20 px-2 py-1 border rounded text-sm" />
-            <button onclick="ajustarStock('${id}', parseInt(document.getElementById('ajuste-${id}').value || 0))" class="px-2 py-1 bg-green-500 text-white rounded">+N</button>
-            <button onclick="ajustarStock('${id}', -parseInt(document.getElementById('ajuste-${id}').value || 0))" class="px-2 py-1 bg-yellow-500 text-white rounded">-N</button>
+            <button onclick="ajustarStock('${id}', parseInt(document.getElementById('ajuste-${id}').value || 0))" class="px-2 py-1 bg-green-500 text-white rounded">Agregar</button>
+            <button onclick="ajustarStock('${id}', -parseInt(document.getElementById('ajuste-${id}').value || 0))" class="px-2 py-1 bg-yellow-500 text-white rounded">Reducir</button>
           </div>
         </div>`;
     });
