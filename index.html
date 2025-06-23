@@ -3,76 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inventario EMP</title>
+  <title>Gestión de Inventario</title>
+
+  <!-- Landwind + Tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link href="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.css" rel="stylesheet" />
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
-<body>
-  <h1>Gestión de Inventario</h1>
+<body class="bg-gray-50 text-gray-800 px-6 py-4 font-sans">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Gestión de Inventario</h1>
 
-  <h2>Registrar nuevo producto</h2>
-  <label>Nombre: <input type="text" id="nombre" /></label><br />
-  <label>Categoría: <input type="text" id="categoria" /></label><br />
-  <label>Unidad: <input type="text" id="unidad" /></label><br />
-  <label>Stock inicial: <input type="number" id="stock" /></label><br />
-  <label>Umbral mínimo: <input type="number" id="umbral" /></label><br />
-  <label>Vida útil (días): <input type="number" id="vida_util" /></label><br />
-  <button onclick="registrarProducto()">Registrar producto</button>
+    <!-- Registrar producto -->
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Registrar nuevo producto</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" id="nombre" placeholder="Nombre" class="input" />
+        <input type="text" id="categoria" placeholder="Categoría" class="input" />
+        <input type="text" id="unidad" placeholder="Unidad" class="input" />
+        <input type="number" id="stock" placeholder="Stock inicial" class="input" />
+        <input type="number" id="umbral" placeholder="Umbral mínimo" class="input" />
+        <input type="number" id="vida_util" placeholder="Vida útil (días)" class="input" />
+      </div>
+      <button onclick="registrarProducto()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Registrar</button>
+    </section>
 
-  <h2>Inventario actual</h2>
-  <div id="productos">Cargando productos...</div>
+    <!-- Inventario -->
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Inventario actual</h2>
+      <div id="productos" class="space-y-2 text-sm text-gray-700">Cargando...</div>
+    </section>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDlTr-BAF6DMhb4XeYhbkuiPOIc2vLrtDs",
-      authDomain: "gestion-inventario-emp.firebaseapp.com",
-      databaseURL: "https://gestion-inventario-emp-default-rtdb.firebaseio.com",
-      projectId: "gestion-inventario-emp",
-      storageBucket: "gestion-inventario-emp.firebasestorage.app",
-      messagingSenderId: "733370903687",
-      appId: "1:733370903687:web:c2893acb73148f71e15c22"
-    };
+    <!-- Predicción -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Predicción de reabastecimiento</h2>
+      <button onclick="calcularPredicciones()" class="mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Calcular</button>
+      <div id="predicciones" class="overflow-x-auto text-sm"></div>
+    </section>
+  </div>
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    function registrarProducto() {
-      const producto = {
-        nombre: document.getElementById('nombre').value,
-        categoria: document.getElementById('categoria').value,
-        unidad: document.getElementById('unidad').value,
-        stock: parseInt(document.getElementById('stock').value),
-        umbral: parseInt(document.getElementById('umbral').value),
-        vida_util: parseInt(document.getElementById('vida_util').value),
-        historial: {}, // Se inicializa vacío
-        fechaCreacion: new Date().toISOString()
-      };
-
-      db.collection("productos").add(producto).then(() => {
-        alert("✅ Producto registrado");
-        cargarProductos();
-      });
-    }
-
-    function cargarProductos() {
-      const contenedor = document.getElementById("productos");
-      contenedor.innerHTML = "Cargando...";
-
-      db.collection("productos").get().then(snapshot => {
-        contenedor.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          contenedor.innerHTML += `
-            <div>
-              <strong>${data.nombre}</strong> (${data.categoria})<br/>
-              Stock: ${data.stock} ${data.unidad} | Umbral: ${data.umbral} | Vida útil: ${data.vida_util} días
-              <hr/>
-            </div>`;
-        });
-      });
-    }
-
-    window.onload = cargarProductos;
-  </script>
+  <!-- App logic -->
+  <script src="app.js"></script>
 </body>
 </html>
