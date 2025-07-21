@@ -29,5 +29,5 @@ button {
 }
 
 .w-20 {
-  width: auto;
+  width: auto !important;
 }
