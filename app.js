@@ -39,7 +39,7 @@ function cargarProductos() {
     Object.entries(data).forEach(([id, p]) => {
       contenedor.innerHTML += `
         <div class="p-3 bg-white rounded shadow text-sm space-y-1">
-          <strong>${p.nombre || id}</strong> (${p.categoria || "Sin categoría"})<br/>
+          <strong>${p.nombre}</strong> (${p.categoria})<br/>
           Stock: <span id="stock-${id}">${p.stock}</span> ${p.unidad || ""}<br/>
           Umbral: ${p.umbral} | Vida útil: ${p.vida_util} días
           <div class="flex items-center gap-2 mt-2">
@@ -74,7 +74,7 @@ function calcularPredicciones() {
   const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
   const diasRestantes = diasMes - diaActual;
 
-  db.ref(`/${cliente}/inventario`).once("value", snapshot => {
+  db.ref(`${cliente}/inventario`).once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay datos disponibles.</p>";
@@ -91,12 +91,10 @@ function calcularPredicciones() {
         <th class="px-2 py-1">Sugerido</th>
       </tr></thead><tbody>`;
 
-    Object.entries(data).forEach(([id, p]) => {
+    Object.values(data).forEach(p => {
       const historial = p.historial || {};
       const consumos = Object.values(historial);
-      const promedio = consumos.length > 0
-        ? consumos.reduce((a, b) => a + b, 0) / consumos.length
-        : 0;
+      const promedio = consumos.length > 0 ? consumos.reduce((a, b) => a + b, 0) / consumos.length : 0;
 
       const vidaUtil = p.vida_util || 30;
       const maximoSeguro = (vidaUtil / 30) * promedio;
@@ -107,7 +105,7 @@ function calcularPredicciones() {
       const sugerido = Math.max(0, Math.ceil(promedio - stockProyectado));
 
       html += `<tr class="border-b">
-        <td class="px-2 py-1">${p.nombre || id}</td>
+        <td class="px-2 py-1">${p.nombre}</td>
         <td class="px-2 py-1">${promedio.toFixed(1)}</td>
         <td class="px-2 py-1">${p.stock}</td>
         <td class="px-2 py-1">${vidaUtil}</td>
