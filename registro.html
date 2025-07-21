@@ -13,7 +13,11 @@
   <header class="bg-white shadow">
     <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
       <a href="index.html">
-        <h1 class="text-xl font-bold">Prototipo Thunderbolts</h1>
+        <h1 class="text-xl font-bold" id="nombreCliente">Prototipo</h1>
+        <script>
+          const nombre = localStorage.getItem("nombreCliente");
+          if (nombre) document.getElementById("nombreCliente").innerText = nombre;
+        </script>
       </a>
       <ul class="flex space-x-6 text-sm">
         <li><a href="registro.html" class="text-blue-600 font-semibold">Registro de productos</a></li>

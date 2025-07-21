@@ -3,25 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prototipo Thunderbolts</title>
+  <title>Login - Prototipo Thunderbolts</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-gray-800">
-  <header class="bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <a href="index.html">
-        <h1 class="text-xl font-bold">Prototipo Thunderbolts</h1>
-      </a>
-      <nav class="space-x-6">
-        <a href="registro.html" class="text-gray-700 hover:text-indigo-700 font-medium">Registro de productos</a>
-        <a href="inventario.html" class="text-gray-700 hover:text-indigo-700 font-medium">Inventario</a>
-        <a href="reabastecimiento.html" class="text-gray-700 hover:text-indigo-700 font-medium">Solicitud de reabastecimiento</a>
-      </nav>
+  <main class="flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+      <h2 class="text-2xl font-bold text-center mb-6 text-indigo-700">Iniciar sesión</h2>
+      <div class="space-y-4">
+        <input id="usuario" type="text" placeholder="Usuario" class="w-full border rounded px-3 py-2">
+        <input id="contrasena" type="password" placeholder="Contraseña" class="w-full border rounded px-3 py-2">
+        <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded">Ingresar</button>
+        <p id="error" class="text-red-500 text-center text-sm"></p>
+      </div>
     </div>
-  </header>
-
-  <main class="flex items-center justify-center h-[calc(100vh-80px)]">
-    <h2 class="text-3xl font-semibold text-center text-indigo-600">Bienvenido al Prototipo Thunderbolts</h2>
   </main>
+
+  <script>
+    const clientes = {
+      "Alicia_sotomayor": "AS123456",
+      "Tus_burguers": "FE098765",
+      "KFC": "KFEC090150"
+    };
+
+    const nombreFormal = {
+      "Alicia Sotomayor": "Alicia Sotomayor",
+      "Tus burguers": "Tus Burguers",
+      "KFC": "KFC"
+    };
+
+    function login() {
+      const user = document.getElementById("usuario").value.trim();
+      const pass = document.getElementById("contrasena").value.trim();
+      const clave = user.replace(/\s+/g, "_").toLowerCase();
+
+      if (clientes[clave] && clientes[clave] === pass) {
+        localStorage.setItem("cliente", clave);
+        localStorage.setItem("nombreCliente", nombreFormal[clave]);
+        window.location.href = "inventario.html";
+      } else {
+        document.getElementById("error").innerText = "Usuario o contraseña incorrectos.";
+      }
+    }
+  </script>
 </body>
 </html>
