@@ -74,7 +74,7 @@ function calcularPredicciones() {
   const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
   const diasRestantes = diasMes - diaActual;
 
-  db.ref(`/${cliente}/inventario`).once("value", snapshot => {
+  db.ref(`${cliente}/inventario`).once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay datos disponibles.</p>";
@@ -94,9 +94,7 @@ function calcularPredicciones() {
     Object.values(data).forEach(p => {
       const historial = p.historial || {};
       const consumos = Object.values(historial);
-      const promedio = consumos.length > 0
-        ? consumos.reduce((a, b) => a + b, 0) / consumos.length
-        : 0;
+      const promedio = consumos.length > 0 ? consumos.reduce((a, b) => a + b, 0) / consumos.length : 0;
 
       const vidaUtil = p.vida_util || 30;
       const maximoSeguro = (vidaUtil / 30) * promedio;
