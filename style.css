@@ -1,4 +1,8 @@
 /* Estilos personalizados para inputs y tablas */
+.text-xl {
+  @apply color: rgb(67 56 202 / var(--tw-text-opacity, 1)) text-gray-800 font-semibold;
+}
+
 
 .input {
   @apply w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
@@ -22,4 +26,8 @@
 
 button {
   @apply transition duration-200;
+}
+
+.w-20 {
+  width: auto;
 }
