@@ -23,6 +23,42 @@ if (header && nombreCliente) {
   header.innerText = nombreCliente;
 }
 
+function registrarProducto() {
+  const nombre   = document.getElementById("nombre").value.trim();
+  const categoria= document.getElementById("categoria").value.trim();
+  const unidad   = document.getElementById("unidad").value.trim();
+  const stock    = parseInt(document.getElementById("stock").value, 10);
+  const umbral   = parseInt(document.getElementById("umbral").value, 10);
+  const vidaUtil = parseInt(document.getElementById("vida_util").value, 10);
+
+  if (!nombre || isNaN(stock) || isNaN(umbral) || isNaN(vidaUtil)) {
+    return alert("Completa todos los campos con datos válidos.");
+  }
+
+  // Genera una clave única para el producto
+  const key = nombre.replace(/\s+/g, "_").toLowerCase();
+
+  db.ref(`/${cliente}/inventario/${key}`).set({
+    nombre,
+    categoria,
+    unidad,
+    stock,
+    umbral,
+    vida_util: vidaUtil,
+    historial: {}    // o puedes presemplificar con { [mesActual]: stock }
+  })
+  .then(() => {
+    alert("Producto registrado ✔️");
+    cargarProductos();        // refresca inventario si estás en inventario.html
+    calcularPredicciones();   // refresca reabastecimiento si estás en esa pestaña
+  })
+  .catch(err => {
+    console.error("Error al registrar:", err);
+    alert("Hubo un error al registrar el producto.");
+  });
+}
+
+
 // Cargar productos en tarjetas con controles de stock
 function cargarProductos() {
   const contenedor = document.getElementById("productos");

@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registro de productos - Thunderbolts</title>
 
-  <!-- Tailwind CSS y Flowbite -->
+  <!-- Tailwind CSS + Flowbite -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
   <link href="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.css" rel="stylesheet" />
 </head>
+
 <body class="bg-gray-100 text-gray-800 font-sans">
   <header class="bg-white shadow">
     <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
       <a href="index.html">
         <h1 class="text-xl font-bold" id="nombreCliente">Prototipo</h1>
-        <script>
-          const nombre = localStorage.getItem("nombreCliente");
-          if (nombre) document.getElementById("nombreCliente").innerText = nombre;
-        </script>
       </a>
+      <script>
+        // Este script cambia el título una vez que ya está el h1 en el DOM
+        const nombre = localStorage.getItem("nombreCliente");
+        if (nombre) document.getElementById("nombreCliente").innerText = nombre;
+      </script>
       <ul class="flex space-x-6 text-sm">
         <li><a href="registro.html" class="text-blue-600 font-semibold">Registro de productos</a></li>
         <li><a href="inventario.html" class="hover:text-blue-500">Inventario</a></li>
@@ -30,18 +32,22 @@
   <main class="max-w-3xl mx-auto py-10 px-4">
     <h2 class="text-2xl font-bold mb-6">Registrar nuevo producto</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-      <input type="text" id="nombre" placeholder="Nombre del producto" class="input" />
-      <input type="text" id="categoria" placeholder="Categoría" class="input" />
-      <input type="text" id="unidad" placeholder="Unidad de medida" class="input" />
-      <input type="number" id="stock" placeholder="Stock inicial" class="input" />
-      <input type="number" id="umbral" placeholder="Umbral mínimo" class="input" />
-      <input type="number" id="vida_util" placeholder="Vida útil (días)" class="input" />
+      <input type="text" id="nombre" placeholder="Nombre del producto" class="input border rounded px-2 py-1" />
+      <input type="text" id="categoria" placeholder="Categoría" class="input border rounded px-2 py-1" />
+      <input type="text" id="unidad" placeholder="Unidad de medida" class="input border rounded px-2 py-1" />
+      <input type="number" id="stock" placeholder="Stock inicial" class="input border rounded px-2 py-1" />
+      <input type="number" id="umbral" placeholder="Umbral mínimo" class="input border rounded px-2 py-1" />
+      <input type="number" id="vida_util" placeholder="Vida útil (días)" class="input border rounded px-2 py-1" />
     </div>
     <button onclick="registrarProducto()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
       Registrar producto
     </button>
   </main>
 
+  <!-- 1) Carga Firebase App y Database antes de tu app.js -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <!-- 2) Tu código único: app.js -->
   <script src="app.js"></script>
 </body>
 </html>

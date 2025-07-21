@@ -5,24 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solicitud de reabastecimiento - Thunderbolts</title>
 
-  <!-- Tailwind + Landwind -->
+  <!-- Tailwind + Flowbite -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
   <link href="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.css" rel="stylesheet" />
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
+
+  <!-- Header y navegación -->
   <header class="bg-white shadow">
     <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
       <a href="index.html">
-        <h1 class="text-xl font-bold" id="nombreCliente">Prototipo</h1>
-        <script>
-          const nombre = localStorage.getItem("nombreCliente");
-          if (nombre) document.getElementById("nombreCliente").innerText = nombre;
-        </script>
+        <h1 id="nombreCliente" class="text-xl font-bold">Prototipo</h1>
       </a>
       <ul class="flex space-x-6 text-sm">
         <li><a href="registro.html" class="hover:text-blue-500">Registro de productos</a></li>
@@ -32,76 +25,18 @@
     </nav>
   </header>
 
+  <!-- Contenedor principal -->
   <main class="max-w-5xl mx-auto py-10 px-4">
     <h2 class="text-2xl font-bold mb-6">Pedido sugerido para el próximo mes</h2>
-    <div id="predicciones" class="overflow-x-auto text-sm">Calculando...</div>
+    <div id="predicciones" class="overflow-x-auto text-sm">
+      <!-- Aquí inyecta tu app.js la tabla -->
+    </div>
   </main>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDlTr-BAF6DMhb4XeYhbkuiPOIc2vLrtDs",
-      authDomain: "gestion-inventario-emp.firebaseapp.com",
-      databaseURL: "https://gestion-inventario-emp-default-rtdb.firebaseio.com",
-      projectId: "gestion-inventario-emp",
-      storageBucket: "gestion-inventario-emp.firebasestorage.app",
-      messagingSenderId: "733370903687",
-      appId: "1:733370903687:web:c2893acb73148f71e15c22"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    function calcularPredicciones() {
-      const contenedor = document.getElementById("predicciones");
-
-      db.ref().once("value", snapshot => {
-        const data = snapshot.val();
-        if (!data) {
-          contenedor.innerHTML = "<p class='text-gray-500'>No hay datos disponibles.</p>";
-          return;
-        }
-
-        const hoy = new Date();
-        const diasDelMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
-        const diasRestantes = diasDelMes - hoy.getDate();
-
-        let html = `<table class="table-auto w-full text-left border text-sm">
-          <thead><tr class="bg-gray-100">
-            <th class="px-2 py-1">Producto</th>
-            <th class="px-2 py-1">Prom. mensual</th>
-            <th class="px-2 py-1">Stock actual</th>
-            <th class="px-2 py-1">Consumo estimado restante</th>
-            <th class="px-2 py-1">Stock al 1° del mes</th>
-            <th class="px-2 py-1">Pedido sugerido</th>
-          </tr></thead><tbody>`;
-
-        Object.values(data).forEach(p => {
-          const historial = p.historial || {};
-          const consumos = Object.values(historial);
-          const promedio = consumos.length > 0
-            ? consumos.reduce((a, b) => a + b, 0) / consumos.length
-            : 0;
-
-          const consumoDiario = promedio / diasDelMes;
-          const consumoEstimado = consumoDiario * diasRestantes;
-          const stockEsperado = p.stock - consumoEstimado;
-          const sugerido = Math.max(0, Math.ceil(promedio - stockEsperado));
-
-          html += `<tr class="border-b">
-            <td class="px-2 py-1">${p.nombre}</td>
-            <td class="px-2 py-1">${promedio.toFixed(1)}</td>
-            <td class="px-2 py-1">${p.stock}</td>
-            <td class="px-2 py-1">${consumoEstimado.toFixed(1)}</td>
-            <td class="px-2 py-1">${stockEsperado.toFixed(1)}</td>
-            <td class="px-2 py-1 font-semibold">${sugerido}</td>
-          </tr>`;
-        });
-
-        html += "</tbody></table>";
-        contenedor.innerHTML = html;
-      });
-    }
-
-    window.onload = calcularPredicciones;
-  </script>
+  <!-- 1) Firebase App + Database (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <!-- 2) Tu único script con TODO el backend -->
+  <script src="app.js"></script>
 </body>
 </html>
