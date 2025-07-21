@@ -73,7 +73,7 @@ function calcularPredicciones() {
   const diaActual = hoy.getDate();
   const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
   const diasRestantes = diasMes - diaActual;
-
+  console.log("Cliente:", cliente);
   db.ref(`${cliente}/inventario`).once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
@@ -91,7 +91,7 @@ function calcularPredicciones() {
         <th class="px-2 py-1">Sugerido</th>
       </tr></thead><tbody>`;
 
-    console.log("DATA CARGADA:", data);
+    console.log("PRUEBA:", JSON.stringify(data, null, 2));
 
     Object.entries(data).forEach(([nombre, p]) => {
       const historial = p.historial || {};
@@ -123,7 +123,7 @@ function calcularPredicciones() {
 
 // Cargar productos al iniciar
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("Cargando")
+  console.log("Cargando");
   cargarProductos();
   calcularPredicciones();
 });
