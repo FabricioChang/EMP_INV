@@ -90,7 +90,7 @@ function calcularPredicciones() {
         <th class="px-2 py-1">Máx. seguro</th>
         <th class="px-2 py-1">Sugerido</th>
       </tr></thead><tbody>`;
-      
+
     console.log("DATA CARGADA:", data);
 
     Object.entries(data).forEach(([nombre, p]) => {
@@ -123,6 +123,7 @@ function calcularPredicciones() {
 
 // Cargar productos al iniciar
 window.addEventListener("DOMContentLoaded", () => {
+  console.log("Cargando")
   cargarProductos();
   calcularPredicciones();
 });
