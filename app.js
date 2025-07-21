@@ -13,12 +13,22 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// === CLIENTE AUTENTICADO ===
+const cliente = localStorage.getItem("cliente");
+const nombreCliente = localStorage.getItem("nombreCliente");
+
+// Cambiar título dinámicamente si existe encabezado
+const header = document.querySelector("header h1");
+if (header && nombreCliente) {
+  header.innerText = nombreCliente;
+}
+
 // Cargar productos en tarjetas con controles de stock
 function cargarProductos() {
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "Cargando...";
 
-  db.ref().once("value", snapshot => {
+  db.ref(`/${cliente}/inventario`).once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay productos registrados aún.</p>";
@@ -48,7 +58,7 @@ function cargarProductos() {
 function ajustarStock(id, cantidad) {
   const stockEl = document.getElementById(`stock-${id}`);
   const nuevoStock = Math.max(0, parseInt(stockEl.textContent) + cantidad);
-  db.ref(id).update({ stock: nuevoStock });
+  db.ref(`${cliente}/inventario/${id}`).update({ stock: nuevoStock });
   stockEl.textContent = nuevoStock;
   calcularPredicciones(); // Actualiza la predicción en tiempo real
 }
@@ -64,7 +74,7 @@ function calcularPredicciones() {
   const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
   const diasRestantes = diasMes - diaActual;
 
-  db.ref().once("value", snapshot => {
+  db.ref(`/${cliente}/inventario`).once("value", snapshot => {
     const data = snapshot.val();
     if (!data) {
       contenedor.innerHTML = "<p class='text-gray-500'>No hay datos disponibles.</p>";
