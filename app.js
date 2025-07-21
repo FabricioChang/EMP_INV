@@ -159,7 +159,15 @@ function calcularPredicciones() {
 
 // Cargar productos al iniciar
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("Cargando");
-  cargarProductos();
-  calcularPredicciones();
+  console.log("🔄 app.js iniciado");
+
+  if (document.getElementById("productos")) {
+    console.log("👉 Invocando cargarProductos");
+    cargarProductos();
+  }
+
+  if (document.getElementById("predicciones")) {
+    console.log("👉 Invocando calcularPredicciones");
+    calcularPredicciones();
+  }
 });
