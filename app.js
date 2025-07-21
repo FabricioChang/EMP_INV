@@ -90,8 +90,10 @@ function calcularPredicciones() {
         <th class="px-2 py-1">Máx. seguro</th>
         <th class="px-2 py-1">Sugerido</th>
       </tr></thead><tbody>`;
+      
+    console.log("DATA CARGADA:", data);
 
-    Object.values(data).forEach(p => {
+    Object.entries(data).forEach(([nombre, p]) => {
       const historial = p.historial || {};
       const consumos = Object.values(historial);
       const promedio = consumos.length > 0 ? consumos.reduce((a, b) => a + b, 0) / consumos.length : 0;
@@ -105,7 +107,7 @@ function calcularPredicciones() {
       const sugerido = Math.max(0, Math.ceil(promedio - stockProyectado));
 
       html += `<tr class="border-b">
-        <td class="px-2 py-1">${p.nombre}</td>
+        <td class="px-2 py-1">${nombre}</td>
         <td class="px-2 py-1">${promedio.toFixed(1)}</td>
         <td class="px-2 py-1">${p.stock}</td>
         <td class="px-2 py-1">${vidaUtil}</td>
